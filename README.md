@@ -1,4 +1,4 @@
-﻿# mize-task
+# mize-task
 
 Supplier Feed Throttle & Dedup Service: an ASP.NET Core Web API (.NET 8) backed by SQLite and Dapper.
 
@@ -31,7 +31,8 @@ Request flow: controller -> service -> repositories (Dapper) -> SQLite. Reposito
 - **SQLite** is the database: no install needed. Multiple server instances are only correct if they share the same database; in production this would move to SQL Server/Postgres (the SQL is kept simple for that).
 - **Reservation identity** is (`supplierId`, `reservationId`): two suppliers may reuse the same reservation id.
 - **Price** is stored as TEXT (exact decimal), because SQLite has no decimal type and floats are unsafe for money. Timestamps are ISO 8601 UTC TEXT.
-- **Throttling state lives in the database** (`RequestLog`) rather than memory, so the limit holds across instances. Write requests take the SQLite write lock up front (`BEGIN IMMEDIATE`) so the check-then-write cannot interleave; reads do not.
+- **Throttling state lives in the database** (`RequestLog`) rather than memory, so the limit holds across instances. Write requests take the SQLite write lock up front (`BEGIN IMMEDIATE`) so the check-then-write cannot interleave; reads do not.
+
 - **Throttle semantics:** at most 100 *accepted* requests per supplier in any rolling 60s window (configurable under `Throttle`). The 101st gets `429` with a `Retry-After` header. Rejected requests are not logged, so hammering while throttled does not extend the penalty. Duplicates count as requests; invalid (400) requests do not reach the limiter.
 - **Dedup:** "same details" means same room, check-in, check-out and price. A resend that only bumps `updatedAtUtc` is treated as unchanged.
 - **Out-of-order retries:** if details differ but the incoming `updatedAtUtc` is older than the stored one, the stored data is kept (outcome `Stale`, counted as unchanged) rather than being overwritten by an old retry.
@@ -55,4 +56,5 @@ Request flow: controller -> service -> repositories (Dapper) -> SQLite. Reposito
 
 ## Claude Code transcript
 
-The full, unedited Claude Code conversation is in [docs/claude-code-transcript.txt](docs/claude-code-transcript.txt). /export was not available in this environment, so it is a text export of the saved session files (the original session, the short esume sessions that hit the API usage limit, and the session that finished the work), in chronological order. It omits internal reasoning blocks and anything after the moment it was generated.
+The full, unedited Claude Code conversation is in [docs/claude-code-transcript.txt](docs/claude-code-transcript.txt). `/export` was not available in this environment, so it is a text export of the saved session files (the original session, the short "resume" sessions that hit the API usage limit, and the session that finished the work), in chronological order. It omits internal reasoning blocks and anything after the moment it was generated.
+esume sessions that hit the API usage limit, and the session that finished the work), in chronological order. It omits internal reasoning blocks and anything after the moment it was generated.
