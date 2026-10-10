@@ -40,9 +40,15 @@ Request flow: controller -> service -> repositories (Dapper) -> SQLite. Reposito
 
 ## Claude Code suggestions I changed or rejected
 
-_To be filled in as the work progresses._
+- **Price storage:** Claude offered several options for the SQLite price column; I chose exact decimal as TEXT over REAL/integer-cents, to avoid float rounding without changing the API contract.
+- **Table design:** I asked Claude to explain `RequestLog` and `SupplierStats` before accepting them, then kept both: the log is the source of truth for the rolling window, the counters make the stats endpoint a single-row read.
+- **Service design:** I steered toward repositories behind interfaces with a unit of work (rather than a DbContext-style abstraction), injected into services/controllers, and asked for project skills (SOLID/patterns, performance, docs + tests) that Claude applies on every change.
+- **Workflow:** every change goes on its own branch and PR that I review before it is merged to `main`.
+- **Claude's .NET 10 templates:** the SDK only offered `net10.0`; the projects were retargeted to `net8.0` by hand to match the brief.
 
 ## With more time
 
-_To be filled in as the work progresses._
-
+- **Real database.** SQLite serialises all writers, which caps throughput. SQL Server/Postgres with a per-supplier atomic counter (or Redis sliding-window) would scale better; multiple instances today must share one database file.
+- **Throttle cost.** Each accepted request inserts a log row and prunes old ones; a fixed-bucket counter would be cheaper at the price of a less exact window.
+- **Idempotency edge cases:** configurable stale-update policy, and an optimistic-concurrency token on reservations.
+- **Operational hardening:** auth per supplier, structured logging/metrics, a background job to purge idle suppliers' log rows, rate-limit headers on successful responses, and load tests.
