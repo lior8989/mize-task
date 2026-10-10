@@ -57,4 +57,3 @@ Request flow: controller -> service -> repositories (Dapper) -> SQLite. Reposito
 ## Claude Code transcript
 
 The full, unedited Claude Code conversation is in [docs/claude-code-transcript.txt](docs/claude-code-transcript.txt). `/export` was not available in this environment, so it is a text export of the saved session files (the original session, the short "resume" sessions that hit the API usage limit, and the session that finished the work), in chronological order. It omits internal reasoning blocks and anything after the moment it was generated.
-esume sessions that hit the API usage limit, and the session that finished the work), in chronological order. It omits internal reasoning blocks and anything after the moment it was generated.
