@@ -1,9 +1,11 @@
 using System.Reflection;
 using Microsoft.OpenApi.Models;
+using SupplierFeed.Api.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddDataAccess(builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -20,6 +22,8 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 var app = builder.Build();
+
+await app.Services.GetRequiredService<IDatabaseInitializer>().InitializeAsync(CancellationToken.None);
 
 // Swagger is enabled in every environment on purpose: this is a scoped exercise
 // and reviewers should be able to try the API without extra configuration.
