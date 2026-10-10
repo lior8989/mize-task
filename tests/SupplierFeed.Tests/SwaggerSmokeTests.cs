@@ -1,16 +1,16 @@
 using System.Net;
-using Microsoft.AspNetCore.Mvc.Testing;
+using SupplierFeed.Tests.TestSupport;
 
 namespace SupplierFeed.Tests;
 
 /// <summary>
 /// Verifies the API host starts and exposes its Swagger documents.
 /// </summary>
-public class SwaggerSmokeTests : IClassFixture<WebApplicationFactory<Program>>
+public class SwaggerSmokeTests : IClassFixture<ApiFactory>
 {
-    private readonly WebApplicationFactory<Program> _factory;
+    private readonly ApiFactory _factory;
 
-    public SwaggerSmokeTests(WebApplicationFactory<Program> factory)
+    public SwaggerSmokeTests(ApiFactory factory)
     {
         _factory = factory;
     }
