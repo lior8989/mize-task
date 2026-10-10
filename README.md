@@ -52,3 +52,7 @@ Request flow: controller -> service -> repositories (Dapper) -> SQLite. Reposito
 - **Throttle cost.** Each accepted request inserts a log row and prunes old ones; a fixed-bucket counter would be cheaper at the price of a less exact window.
 - **Idempotency edge cases:** configurable stale-update policy, and an optimistic-concurrency token on reservations.
 - **Operational hardening:** auth per supplier, structured logging/metrics, a background job to purge idle suppliers' log rows, rate-limit headers on successful responses, and load tests.
+
+## Claude Code transcript
+
+The full, unedited Claude Code conversation is in [docs/claude-code-transcript.txt](docs/claude-code-transcript.txt). /export was not available in this environment, so it is a text export of the saved session files (the original session, the short esume sessions that hit the API usage limit, and the session that finished the work), in chronological order. It omits internal reasoning blocks and anything after the moment it was generated.
