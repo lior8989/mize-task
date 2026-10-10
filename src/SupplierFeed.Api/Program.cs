@@ -1,11 +1,19 @@
-using System.Reflection;
+﻿using System.Reflection;
+using System.Text.Json.Serialization;
 using Microsoft.OpenApi.Models;
 using SupplierFeed.Api.Data;
+using SupplierFeed.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddDataAccess(builder.Configuration);
+builder.Services.AddOptions<ThrottleOptions>()
+    .Bind(builder.Configuration.GetSection(ThrottleOptions.SectionName))
+    .ValidateDataAnnotations()
+    .ValidateOnStart();
+builder.Services.AddScoped<IReservationIngestService, ReservationIngestService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
@@ -38,3 +46,4 @@ app.Run();
 /// Entry point marker, exposed so integration tests can host the app with <c>WebApplicationFactory</c>.
 /// </summary>
 public partial class Program;
+
